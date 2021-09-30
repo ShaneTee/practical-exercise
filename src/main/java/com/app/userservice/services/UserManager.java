@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserManager implements UserManagerInterface{
+public class UserManager implements CustomUserManager {
 
     private final UserRepository userRepository;
 

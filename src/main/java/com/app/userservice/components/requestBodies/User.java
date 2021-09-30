@@ -70,7 +70,7 @@ public class User {
      * @return The instance of User
      */
     public User setPassword(String password) {
-        this.password = password; // TODO: Encode password
+        this.password = password;
         return this;
     }
 

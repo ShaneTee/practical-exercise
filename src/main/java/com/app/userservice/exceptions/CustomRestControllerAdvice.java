@@ -32,7 +32,7 @@ public class CustomRestControllerAdvice{
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Error> handle(Exception e) {
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         Error error = new Error(status, status.getReasonPhrase());
 
         return new ResponseEntity<Error>(error, new HttpHeaders(),status);
