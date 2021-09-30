@@ -7,6 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -19,21 +23,21 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody User user){
+    public ResponseEntity<String> create(@RequestBody @Valid User user){
         this.userManager.create(user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("The user was created successfully");
     }
 
     @GetMapping("/{email}")
-    public ResponseEntity<User> retrieve(@PathVariable String email) throws Exception{
+    public ResponseEntity<Object> retrieve(@PathVariable String email) throws Exception{
         User existingUser = this.userManager.get(email);
 
         return ResponseEntity.ok().body(existingUser);
     }
 
     @PutMapping("/{email}")
-    public ResponseEntity<String> updateUser( @PathVariable String email, @RequestBody User user) throws ClassNotFoundException {
+    public ResponseEntity<String> updateUser( @PathVariable String email, @Valid @RequestBody User user) throws ClassNotFoundException {
         this.userManager.update(email, user);
 
         return ResponseEntity.noContent().build();

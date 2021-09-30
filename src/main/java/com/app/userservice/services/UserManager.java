@@ -5,6 +5,7 @@ import com.app.userservice.exceptions.UserNotFoundException;
 import com.app.userservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
 

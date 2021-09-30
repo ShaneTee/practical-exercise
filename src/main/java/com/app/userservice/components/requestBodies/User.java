@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Formatter;
 
 @Entity
@@ -17,10 +19,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NonNull
+    @NotBlank(message="Email is required.")
+    @Email(message="Please provide a valid email address.")
     private String email;
 
-    @NonNull
+    @NotBlank(message="Password is required.")
     private String password;
 
     @Nullable
@@ -31,7 +34,7 @@ public class User {
 
     public User(String email, String password) {
         this.email = email;
-        this.password = password; // TODO: Encode password
+        this.password = password;
     }
 
     protected User() {}
@@ -59,7 +62,6 @@ public class User {
         return this;
     }
 
-    @JsonIgnore
     public String getPassword() {
         return password;
     }
