@@ -1,7 +1,6 @@
 package com.app.userservice.exceptions;
 
 import com.app.userservice.components.responses.Error;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
 import java.util.StringJoiner;
 
 @RestControllerAdvice
@@ -60,11 +60,11 @@ public class CustomRestControllerAdvice{
      * @param e Exception raised during runtime.
      * @return A response entity of internal error during server runtime.
      */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Error> handle(Exception e) {
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        Error error = new Error(status, status.getReasonPhrase());
-
-        return new ResponseEntity<Error>(error, new HttpHeaders(),status);
-    }
+    //@ExceptionHandler(Exception.class)
+    //public ResponseEntity<Error> handle(Exception e) {
+    //    HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+    //    Error error = new Error(status, status.getReasonPhrase());
+//
+    //    return new ResponseEntity<Error>(error, new HttpHeaders(),status);
+    //}
 }
