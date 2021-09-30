@@ -25,7 +25,7 @@ public class UserControllerTest {
     private final ObjectMapper mapper;
     private MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON;
 
-    private User VALID_USER_WITH_REQUIRED = new User("some.one@email.com", "s0m3s3cr3tp455w0rd");
+    private User VALID_USER = new User("some.one@email.com", "s0m3s3cr3tp455w0rd");
 
     @Autowired
     public UserControllerTest(MockMvc mvc) {
@@ -34,18 +34,18 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUserSuccess() throws Exception {
+    public void createUser() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user")
-                        .content(mapper.writeValueAsBytes(VALID_USER_WITH_REQUIRED))
+                        .content(mapper.writeValueAsBytes(VALID_USER))
                         .contentType(CONTENT_TYPE)
                         .accept(CONTENT_TYPE))
                 .andExpect(status().isCreated());
         ;
     }
     @Test
-    public void createUserWithOptionalNamesSuccess() throws Exception {
+    public void createUserWithOptionalNames() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user")
-                        .content(mapper.writeValueAsBytes(VALID_USER_WITH_REQUIRED.setFirstName("Some")
+                        .content(mapper.writeValueAsBytes(VALID_USER.setFirstName("Some")
                                 .setLastName("One")))
                         .contentType(CONTENT_TYPE)
                         .accept(CONTENT_TYPE))
@@ -54,9 +54,9 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUserWithoutPasswordBadRequest() throws Exception {
+    public void createUserWithoutPassword() throws Exception {
         HashMap<String, String> map = new HashMap<String, String>();
-        map.put("email", VALID_USER_WITH_REQUIRED.getEmail());
+        map.put("email", VALID_USER.getEmail());
 
         mvc.perform(MockMvcRequestBuilders.post("/user").content(mapper.writeValueAsBytes(map))
                         .contentType(CONTENT_TYPE)
@@ -65,7 +65,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUserOnlyNamesFailsBadRequest() throws Exception {
+    public void createUserOnlyNames() throws Exception {
         HashMap<String, String> map = new HashMap<String, String>();
         map.put("firstName", "Some");
         map.put("lastName", "One");
@@ -77,7 +77,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUserEmptyBodyBadRequest() throws Exception {
+    public void createUserEmptyBody() throws Exception {
 
         mvc.perform(MockMvcRequestBuilders.post("/user")
                         .contentType(CONTENT_TYPE)
@@ -87,19 +87,19 @@ public class UserControllerTest {
 
     @Test
     public void getUser() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/user/{email}", VALID_USER_WITH_REQUIRED.getEmail())
+        mvc.perform(MockMvcRequestBuilders.get("/user/{email}", VALID_USER.getEmail())
                         .accept(CONTENT_TYPE))
                 .andExpectAll(
                         status().isOk(),
                         content().contentType(CONTENT_TYPE),
-                        content().json(mapper.writeValueAsString(VALID_USER_WITH_REQUIRED)));
+                        content().json(mapper.writeValueAsString(VALID_USER)));
     }
 
     @Test
-    public void getUserBadRequest() throws Exception {
+    public void getUserEmailPath() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/user/{email}", "Some")
                         .contentType(CONTENT_TYPE)
-                        .content(mapper.writeValueAsString(VALID_USER_WITH_REQUIRED))
+                        .content(mapper.writeValueAsString(VALID_USER))
                         .accept(CONTENT_TYPE))
                 .andExpect(
                         status().isBadRequest());
@@ -116,11 +116,74 @@ public class UserControllerTest {
 
     @Test
     public void updateUserSuccess() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.put("/user/{email}", VALID_USER_WITH_REQUIRED.getEmail())
-                        .content(mapper.writeValueAsString(VALID_USER_WITH_REQUIRED.setFirstName("test@google.com")))
+        String updatedUserJson = mapper.writeValueAsString(VALID_USER.setFirstName("Test"));
+
+        mvc.perform(MockMvcRequestBuilders.put("/user/{email}", VALID_USER.getEmail())
+                        .content(updatedUserJson)
                         .contentType(CONTENT_TYPE)
                         .accept(CONTENT_TYPE))
                 .andExpect(status().isNoContent());
+
+        mvc.perform(MockMvcRequestBuilders.get("/user/{email}", VALID_USER.getEmail())
+                            .accept(CONTENT_TYPE))
+                    .andExpectAll(status().isOk(),
+                            content().contentType(CONTENT_TYPE),
+                            content().json(updatedUserJson)
+                    );
+    }
+
+    @Test
+    public void updateUserNotFound() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.put("/user/{email}", "test@google.com")
+                        .content(mapper.writeValueAsString(VALID_USER.setFirstName("Test")))
+                        .contentType(CONTENT_TYPE)
+                        .accept(CONTENT_TYPE))
+                .andExpect(status().isNotFound());
         ;
+    }
+
+
+    @Test
+    public void updateUserInvalidEmailPath() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.put("/user/{email}", "someone")
+                        .contentType(CONTENT_TYPE)
+                        .accept(CONTENT_TYPE))
+                .andExpect(status().isBadRequest());
+        ;
+    }
+
+    @Test
+    public void updateUserInvalidEmailBody() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.put("/user/{email}", VALID_USER.getEmail())
+                        .content(mapper.writeValueAsString(VALID_USER.setEmail("someone")))
+                        .contentType(CONTENT_TYPE)
+                        .accept(CONTENT_TYPE))
+                .andExpect(status().isBadRequest());
+        ;
+    }
+
+    @Test
+    public void updateUserEmptyBody() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.put("/user/{email}", VALID_USER.getEmail())
+                        .contentType(CONTENT_TYPE)
+                        .accept(CONTENT_TYPE))
+                .andExpect(status().isBadRequest());
+        ;
+    }
+
+    @Test
+    public void deleteUser() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.delete("/user/{email}", VALID_USER.getEmail())
+                        .accept(CONTENT_TYPE))
+                .andExpect(status().isNoContent());
+
+        getUser();
+    }
+
+    @Test
+    public void deleteUserInvalidEmailPath() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.delete("/user/{email}", "some")
+                        .accept(CONTENT_TYPE))
+                .andExpect(status().isBadRequest());
     }
 }
