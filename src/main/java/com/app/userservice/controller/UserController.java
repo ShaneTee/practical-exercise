@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -23,10 +21,10 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody @Valid User user){
+    public ResponseEntity<Object> create(@RequestBody @Valid User user){
         this.userManager.create(user);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("The user was created successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/{email}")

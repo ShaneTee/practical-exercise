@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import java.util.Optional;
 
 @Service
+@Validated
 public class UserManager implements CustomUserManager {
 
     private final UserRepository userRepository;
