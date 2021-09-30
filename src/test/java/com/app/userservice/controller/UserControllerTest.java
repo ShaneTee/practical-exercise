@@ -186,4 +186,11 @@ public class UserControllerTest {
                         .accept(CONTENT_TYPE))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void deleteUserNotFound() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.delete("/user/{email}", VALID_USER.getEmail())
+                        .accept(CONTENT_TYPE))
+                .andExpect(status().isNotFound());
+    }
 }
